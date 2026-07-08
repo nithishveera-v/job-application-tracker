@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}JobTracker{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+{% block navbar %}
+<nav class="navbar">
+    <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" class="nav-brand">
+        <span class="nav-brand-dot"></span>JobTracker
+    </a>
+    {% if user.is_authenticated %}
+    <div class="nav-links">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'application_list' %}">Applications</a>
+        <a href="{% url 'application_create' %}">Add Application</a>
+        <span class="nav-divider"></span>
+        <a href="{% url 'export_csv' %}" class="nav-export">Export CSV</a>
+        <span class="nav-divider"></span>
+        <span class="nav-user-chip">
+            <span class="nav-avatar">{{ user.username|first|upper }}</span>
+            {{ user.username }}
+        </span>
+        <form action="{% url 'logout' %}" method="post" class="inline-form">
+            {% csrf_token %}
+            <button type="submit" class="link-button">Sign out</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="nav-links">
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'signup' %}">Sign Up</a>
+    </div>
+    {% endif %}
+</nav>
+{% endblock %}
+
+<div class="page-shell">
+<div class="container">
+    {% if messages %}
+    <div>
+        {% for message in messages %}
+        <div class="flash {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</div>
+</div>
+
+<footer class="footer">© 2026 JobTracker • Built with Django, Bootstrap & MySQL</footer>
+<script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

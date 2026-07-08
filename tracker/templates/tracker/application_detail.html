@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ application.job_title }} · JobTracker{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ application.job_title }}</h1>
+        <p class="page-subtitle">{{ application.company_name }}{% if application.job_location %} · {{ application.job_location }}{% endif %}</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'application_update' application.pk %}" class="btn btn-secondary">Edit</a>
+        <a href="{% url 'application_delete' application.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <div class="card">
+        <div class="card-header"><span class="card-title">Details</span></div>
+        <div class="card-body">
+            <dl class="detail-dl">
+                <dt class="dt">Status</dt>
+                <dd class="dd"><span class="badge badge-{{ application.status|lower }}">{{ application.status }}</span></dd>
+                <dt class="dt">Date Applied</dt>
+                <dd class="dd">{{ application.date_applied }}</dd>
+                <dt class="dt">Interview Date</dt>
+                <dd class="dd">{{ application.interview_date|default:"Not set" }}</dd>
+                {% if application.job_link %}
+                <dt class="dt">Job Posting</dt>
+                <dd class="dd"><a href="{{ application.job_link }}" target="_blank">Open link ↗</a></dd>
+                {% endif %}
+            </dl>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><span class="card-title">Documents</span></div>
+        <div class="card-body">
+            <dl class="detail-dl">
+                <dt class="dt">CV</dt>
+                <dd class="dd">{% if application.cv %}<a href="{{ application.cv.url }}" target="_blank">Download</a>{% else %}<span style="color:var(--text-3)">Not uploaded</span>{% endif %}</dd>
+                <dt class="dt">Cover Letter</dt>
+                <dd class="dd">{% if application.cover_letter %}<a href="{{ application.cover_letter.url }}" target="_blank">Download</a>{% else %}<span style="color:var(--text-3)">Not uploaded</span>{% endif %}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card full">
+        <div class="card-header"><span class="card-title">Notes</span></div>
+        <div class="card-body">
+            <p style="font-size:0.9rem;color:var(--text-2);line-height:1.7">{{ application.notes|linebreaks|default:"No notes added." }}</p>
+        </div>
+    </div>
+</div>
+
+<a href="{% url 'application_list' %}" class="btn btn-secondary">← Back to list</a>
+{% endblock %}

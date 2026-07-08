@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · JobTracker{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Welcome back, {{user.first_name | default:user.username}}</h1>
+        <p class="page-subtitle">Track Your Job Search, Interviews and Offers in One Place</p>
+    </div>
+    <a href="{% url 'application_create' %}" class="btn btn-primary">+ Add Application</a>
+</div>
+
+<!-- Stat cards -->
+<div class="stats-grid">
+    <div class="stat-card s-total">
+        <div class="stat-label">Total</div>
+        <div class="stat-value">{{ total }}</div>
+
+    </div>
+    <div class="stat-card s-applied">
+        <div class="stat-label">Applied</div>
+        <div class="stat-value">{{ status_summary.Applied }}</div>
+
+    </div>
+    <div class="stat-card s-interview">
+        <div class="stat-label">Interview</div>
+        <div class="stat-value">{{ status_summary.Interview }}</div>
+
+    </div>
+    <div class="stat-card s-offer">
+        <div class="stat-label">Offer</div>
+        <div class="stat-value">{{ status_summary.Offer }}</div>
+    </div>
+    <div class="stat-card s-rejected">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value">{{ status_summary.Rejected }}</div>
+    </div>
+</div>
+
+<!-- Charts row -->
+<div class="dash-grid">
+
+    <!-- Big bar chart -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Status Breakdown</span>
+        </div>
+        <div class="card-body">
+            <canvas id="barCanvas"
+                data-applied="{{ status_summary.Applied }}"
+                data-interview="{{ status_summary.Interview }}"
+                data-offer="{{ status_summary.Offer }}"
+                data-rejected="{{ status_summary.Rejected }}">
+            </canvas>
+        </div>
+    </div>
+
+    <!-- Donut chart -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Distribution</span>
+        </div>
+        <div class="card-body">
+            <div class="donut-wrap">
+                <svg id="donutSvg" viewBox="0 0 180 180"
+                    data-applied="{{ status_summary.Applied }}"
+                    data-interview="{{ status_summary.Interview }}"
+                    data-offer="{{ status_summary.Offer }}"
+                    data-rejected="{{ status_summary.Rejected }}">
+                </svg>
+                <div id="chartLegend" class="chart-legend"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Upcoming interviews -->
+{% if upcoming_interviews %}
+<div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header">
+        <span class="card-title">Upcoming Interviews</span>
+        <a href="{% url 'application_list' %}?status=Interview" class="btn btn-ghost btn-sm">View all</a>
+    </div>
+    <div class="card-body" style="padding-top:0.5rem;padding-bottom:0.5rem">
+        {% for app in upcoming_interviews %}
+        <div class="upcoming-item">
+            <div class="udate">
+                <span class="udate-day">{{ app.interview_date|date:"d" }}</span>
+                <span class="udate-mon">{{ app.interview_date|date:"M" }}</span>
+            </div>
+            <div>
+                <div class="uinfo-title"><a href="{% url 'application_detail' app.pk %}">{{ app.job_title }}</a></div>
+                <div class="uinfo-sub">{{ app.company_name }}</div>
+            </div>
+            <span class="badge badge-{{ app.status|lower }}" style="margin-left:auto">{{ app.status }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent applications -->
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">Recent Applications</span>
+        <a href="{% url 'application_list' %}" class="btn btn-ghost btn-sm">View all →</a>
+    </div>
+    {% if recent_applications %}
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Company</th><th>Position</th><th>Status</th><th>Date Applied</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in recent_applications %}
+                <tr>
+                    <td class="td-company">{{ app.company_name }}</td>
+                    <td>{{ app.job_title }}</td>
+                    <td><span class="badge badge-{{ app.status|lower }}">{{ app.status }}</span></td>
+                    <td class="text-muted">{{ app.date_applied }}</td>
+                    <td><a href="{% url 'application_detail' app.pk %}" class="act-link">View →</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>No applications yet</h3>
+        <p>Start tracking your job search journey.</p>
+        <a href="{% url 'application_create' %}" class="btn btn-primary">Add your first application</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

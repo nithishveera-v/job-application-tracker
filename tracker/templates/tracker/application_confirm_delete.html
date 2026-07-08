@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Delete · JobTracker{% endblock %}
+{% block content %}
+<div style="max-width:440px;margin:2rem auto">
+    <div class="card">
+        <div class="card-header"><span class="card-title">Delete Application</span></div>
+        <div class="card-body">
+            <p style="font-size:0.9rem;color:var(--text-2);margin-bottom:1.5rem">
+                Are you sure you want to delete <strong>{{ application.job_title }}</strong> at
+                <strong>{{ application.company_name }}</strong>? This cannot be undone.
+            </p>
+            <form method="post">
+                {% csrf_token %}
+                <div style="display:flex;gap:0.75rem">
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <a href="{% url 'application_detail' application.pk %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

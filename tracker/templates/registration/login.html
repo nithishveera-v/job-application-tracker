@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login · JobTracker</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<div class="auth-shell">
+    <div class="auth-card">
+        <div class="auth-logo"><span class="auth-logo-dot"></span> JobTracker</div>
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-sub">Sign in to manage your job applications</p>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="fg" style="margin-bottom:1rem">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<p class="field-error">{{ field.errors.0 }}</p>{% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top:0.5rem">Sign in</button>
+        </form>
+        <p class="auth-footer">No account? <a href="{% url 'signup' %}">Create one</a></p>
+    </div>
+</div>
+</body>
+</html>
